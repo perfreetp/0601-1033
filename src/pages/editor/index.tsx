@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Input, Button, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
@@ -41,16 +41,23 @@ const EditorPage: React.FC = () => {
     selectedTemplate, photoUrl, setPhotoUrl,
     selectedBorder, setSelectedBorder,
     showBorder, setShowBorder,
-    hasGoldFoil, setHasGoldFoil
+    hasGoldFoil, setHasGoldFoil,
+    titleText, setTitleText,
+    nameText, setNameText,
+    dateText, setDateText,
+    selectedFont, setSelectedFont,
+    selectedPattern, setSelectedPattern,
+    textColor, setTextColor,
+    saveDesignScheme
   } = useDesign();
 
-  const [titleText, setTitleText] = useState('Mr & Mrs');
-  const [nameText, setNameText] = useState('王浩 & 李静');
-  const [dateText, setDateText] = useState('2024.06.18');
-  const [selectedFont, setSelectedFont] = useState('font-1');
-  const [selectedColor, setSelectedColor] = useState(colorSchemes[0].primary);
-  const [selectedPattern, setSelectedPattern] = useState('p1');
   const [hasPhoto, setHasPhoto] = useState(!!photoUrl);
+
+  useEffect(() => {
+    if (photoUrl) {
+      setHasPhoto(true);
+    }
+  }, [photoUrl]);
 
   const handleChooseImage = () => {
     console.log('[Editor] 选择照片');
@@ -72,6 +79,7 @@ const EditorPage: React.FC = () => {
 
   const handleSave = () => {
     console.log('[Editor] 保存设计');
+    saveDesignScheme();
     Taro.showToast({
       title: '设计已保存',
       icon: 'success'
@@ -88,6 +96,11 @@ const EditorPage: React.FC = () => {
   const handleBorderChange = (borderId: string) => {
     console.log('[Editor] 切换边框样式:', borderId);
     setSelectedBorder(borderId);
+    if (borderId === 'b4') {
+      setShowBorder(false);
+    } else {
+      setShowBorder(true);
+    }
   };
 
   const handleToggleShowBorder = () => {
@@ -104,6 +117,10 @@ const EditorPage: React.FC = () => {
     if (!next) {
       setPhotoUrl('');
     }
+  };
+
+  const handleColorChange = (color: string) => {
+    setTextColor(color);
   };
 
   const currentBorderStyle = borderStyleMap[selectedBorder] || borderStyleMap.b1;
@@ -143,10 +160,15 @@ const EditorPage: React.FC = () => {
                 <Text className={styles.placeholder}>♥</Text>
               </View>
             )}
-            <Text className={styles.titleText}>{titleText}</Text>
-            <Text className={classnames(styles.nameText, hasGoldFoil && styles.goldFoil)}>{nameText}</Text>
+            <Text className={styles.titleText} style={{ color: textColor }}>{titleText}</Text>
+            <Text
+              className={classnames(styles.nameText, hasGoldFoil && styles.goldFoil)}
+              style={{ color: hasGoldFoil ? undefined : textColor }}
+            >
+              {nameText}
+            </Text>
             <Text className={styles.subText}>{selectedTemplate?.name || '桌卡设计'}</Text>
-            <Text className={styles.dateText}>{dateText}</Text>
+            <Text className={styles.dateText} style={{ color: textColor }}>{dateText}</Text>
           </View>
         </View>
       </View>
@@ -197,9 +219,9 @@ const EditorPage: React.FC = () => {
               {colorSchemes.map(scheme => (
                 <View
                   key={scheme.id}
-                  className={classnames(styles.colorItem, selectedColor === scheme.primary && styles.active)}
+                  className={classnames(styles.colorItem, textColor === scheme.primary && styles.active)}
                   style={{ background: scheme.primary }}
-                  onClick={() => setSelectedColor(scheme.primary)}
+                  onClick={() => handleColorChange(scheme.primary)}
                 />
               ))}
             </View>

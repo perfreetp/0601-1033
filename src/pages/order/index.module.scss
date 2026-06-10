@@ -364,3 +364,207 @@
     }
   }
 }
+
+.confirmOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.confirmPanel {
+  width: 100%;
+  max-height: 85vh;
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .confirmHeader {
+    padding: $spacing-lg $spacing-lg $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1rpx solid $color-divider;
+    flex-shrink: 0;
+
+    .confirmTitle {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+    }
+
+    .confirmClose {
+      font-size: $font-size-xl;
+      color: $color-text-tertiary;
+      padding: $spacing-xs;
+    }
+  }
+
+  .confirmBody {
+    flex: 1;
+    padding: $spacing-lg;
+    overflow-y: auto;
+  }
+
+  .confirmSection {
+    margin-bottom: $spacing-lg;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .confirmSectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+    display: block;
+  }
+
+  .confirmGrid {
+    display: flex;
+    flex-wrap: wrap;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+    padding: $spacing-md;
+  }
+
+  .confirmItem {
+    width: 50%;
+    margin-bottom: $spacing-md;
+
+    &:nth-last-child(-n+2) {
+      margin-bottom: 0;
+    }
+
+    .confirmLabel {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-bottom: 4rpx;
+      display: block;
+    }
+
+    .confirmValue {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      display: inline-flex;
+      align-items: center;
+
+      &.urgentText {
+        color: $color-warning;
+      }
+    }
+
+    .confirmColorDot {
+      width: 32rpx;
+      height: 32rpx;
+      border-radius: $radius-round;
+      border: 2rpx solid $color-border;
+      display: inline-block;
+    }
+  }
+
+  .confirmPhoto {
+    margin-top: $spacing-md;
+    display: flex;
+    justify-content: center;
+
+    .confirmPhotoImg {
+      width: 200rpx;
+      height: 200rpx;
+      border-radius: $radius-md;
+      border: 2rpx solid $color-primary-light;
+    }
+  }
+
+  .confirmMaterialRow {
+    display: flex;
+    align-items: center;
+    padding: $spacing-sm 0;
+    border-bottom: 1rpx solid $color-divider;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .confirmMatName {
+      flex: 1;
+      font-size: $font-size-sm;
+      color: $color-text-primary;
+    }
+
+    .confirmMatQty {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      margin-right: $spacing-md;
+    }
+
+    .confirmMatPrice {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      color: $color-primary;
+    }
+  }
+
+  .confirmRemark {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    line-height: $line-height-normal;
+    padding: $spacing-md;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+  }
+
+  .confirmFooter {
+    padding: $spacing-md $spacing-lg;
+    padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+    border-top: 1rpx solid $color-divider;
+    background: $color-bg-card;
+    flex-shrink: 0;
+
+    .confirmTotalRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $spacing-md;
+
+      .confirmTotalLabel {
+        font-size: $font-size-md;
+        color: $color-text-secondary;
+      }
+
+      .confirmTotalValue {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        color: $color-primary;
+      }
+    }
+
+    .confirmSubmitBtn {
+      @include button-reset;
+      width: 100%;
+      height: $button-height-lg;
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+      border-radius: $radius-button;
+      color: $color-text-white;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      letter-spacing: 2rpx;
+
+      &:active {
+        opacity: 0.9;
+        transform: scale(0.98);
+      }
+    }
+  }
+}

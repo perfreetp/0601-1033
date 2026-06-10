@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, Image, Input, Button, Textarea } from '@tarojs/components';
+import { View, Text, Image, Input, Button, Textarea, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { paperOptions, mockMaterials } from '@/data/mock';
 import { formatPrice, generateId } from '@/utils';
 import { useDesign } from '@/store/DesignContext';
-import { HistoryOrder, OrderItem } from '@/types';
+import { HistoryOrder, OrderItem, ProductionConfig } from '@/types';
 import styles from './index.module.scss';
 
 interface OrderItemState {
@@ -24,8 +24,21 @@ const typeMap: Record<string, string> = {
   menu: '菜单'
 };
 
+const borderNameMap: Record<string, string> = {
+  b1: '细边框',
+  b2: '粗边框',
+  b3: '双线边框',
+  b4: '无边框'
+};
+
 const OrderPage: React.FC = () => {
-  const { addHistoryOrder, selectedStyle } = useDesign();
+  const {
+    addHistoryOrder, selectedStyle, selectedColor, selectedSize,
+    photoUrl, selectedBorder, showBorder, hasGoldFoil,
+    titleText, nameText, dateText, textColor, guests, tables,
+    currentScheme
+  } = useDesign();
+
   const [orderItems, setOrderItems] = useState<OrderItemState[]>(
     mockMaterials.map((m, idx) => ({
       id: m.id,
@@ -39,6 +52,7 @@ const OrderPage: React.FC = () => {
   const [selectedPaper, setSelectedPaper] = useState(paperOptions[0].id);
   const [isUrgent, setIsUrgent] = useState(false);
   const [remark, setRemark] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const updateQuantity = (id: string, delta: number) => {
     setOrderItems(prev =>
@@ -62,10 +76,42 @@ const OrderPage: React.FC = () => {
 
   const urgentFee = isUrgent ? Math.round(subtotal * 0.2) : 0;
   const totalAmount = subtotal + urgentFee;
+  const paperInfo = paperOptions.find(p => p.id === selectedPaper);
+  const totalQuantity = orderItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleSelectAddress = () => {
     console.log('[Order] 选择收货地址');
     Taro.showToast({ title: '选择地址', icon: 'none' });
+  };
+
+  const buildProductionConfig = (): ProductionConfig => {
+    return {
+      photoUrl,
+      borderStyle: showBorder ? selectedBorder : 'b4',
+      showBorder,
+      hasGoldFoil,
+      textColor,
+      titleText,
+      nameText,
+      dateText,
+      paperId: selectedPaper,
+      paperName: paperInfo?.name || '象牙卡',
+      isUrgent,
+      styleName: selectedStyle?.name || '未设置',
+      colorName: selectedColor?.name || '未设置',
+      sizeName: selectedSize?.name || '未设置',
+      guestCount: guests.length,
+      tableCount: tables.length,
+      remark
+    };
+  };
+
+  const handleShowConfirm = () => {
+    setShowConfirm(true);
+  };
+
+  const handleCloseConfirm = () => {
+    setShowConfirm(false);
   };
 
   const handleSubmit = () => {
@@ -76,50 +122,46 @@ const OrderPage: React.FC = () => {
       remark,
       total: totalAmount
     });
-    Taro.showModal({
-      title: '确认下单',
-      content: `订单总额: ${formatPrice(totalAmount)}，确认提交吗？`,
-      success: (res) => {
-        if (res.confirm) {
-          const now = new Date();
-          const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-          const orderNo = `WD${Date.now().toString().slice(-8)}`;
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const orderNo = `WD${Date.now().toString().slice(-8)}`;
 
-          const orderItemsData: OrderItem[] = orderItems.map(item => ({
-            materialId: item.id,
-            materialName: item.name,
-            quantity: item.quantity,
-            paperId: selectedPaper,
-            unitPrice: item.unitPrice
-          }));
+    const orderItemsData: OrderItem[] = orderItems.map(item => ({
+      materialId: item.id,
+      materialName: item.name,
+      quantity: item.quantity,
+      paperId: selectedPaper,
+      unitPrice: item.unitPrice
+    }));
 
-          const newOrder: HistoryOrder = {
-            id: generateId(),
-            orderNo,
-            weddingName: selectedStyle ? `${selectedStyle.name}婚礼` : '王浩 & 李静',
-            date: dateStr,
-            status: 'producing',
-            statusText: '制作中',
-            totalAmount,
-            items: orderItemsData
-          };
+    const productionConfig = buildProductionConfig();
 
-          addHistoryOrder(newOrder);
+    const newOrder: HistoryOrder = {
+      id: generateId(),
+      orderNo,
+      weddingName: nameText || (selectedStyle ? `${selectedStyle.name}婚礼` : '王浩 & 李静'),
+      date: dateStr,
+      status: 'producing',
+      statusText: '制作中',
+      totalAmount,
+      items: orderItemsData,
+      productionConfig
+    };
 
-          Taro.showToast({
-            title: '下单成功',
-            icon: 'success'
-          });
-          setTimeout(() => {
-            Taro.switchTab({ url: '/pages/profile/index' });
-          }, 1500);
-        }
-      }
+    addHistoryOrder(newOrder);
+    setShowConfirm(false);
+
+    Taro.showToast({
+      title: '下单成功',
+      icon: 'success'
     });
+    setTimeout(() => {
+      Taro.switchTab({ url: '/pages/profile/index' });
+    }, 1500);
   };
 
   return (
-    <View className={styles.pageContainer}>
+    <ScrollView scrollY className={styles.pageContainer}>
       <View className={styles.section}>
         <View className={styles.sectionHeader}>
           <Text className={styles.title}>
@@ -137,7 +179,7 @@ const OrderPage: React.FC = () => {
                   <View>
                     <Text className={styles.name}>{item.name}</Text>
                     <Text className={styles.specs}>
-                      {typeMap[item.type]} · A5尺寸 · {paperOptions.find(p => p.id === selectedPaper)?.name}
+                      {typeMap[item.type]} · A5尺寸 · {paperInfo?.name}
                     </Text>
                   </View>
                   <View className={styles.bottomRow}>
@@ -256,6 +298,126 @@ const OrderPage: React.FC = () => {
         </View>
       </View>
 
+      {showConfirm && (
+        <View className={styles.confirmOverlay} onClick={handleCloseConfirm}>
+          <View className={styles.confirmPanel} onClick={(e) => e.stopPropagation()}>
+            <View className={styles.confirmHeader}>
+              <Text className={styles.confirmTitle}>订单确认清单</Text>
+              <Text className={styles.confirmClose} onClick={handleCloseConfirm}>✕</Text>
+            </View>
+            <ScrollView scrollY className={styles.confirmBody}>
+              <View className={styles.confirmSection}>
+                <Text className={styles.confirmSectionTitle}>设计配置</Text>
+                <View className={styles.confirmGrid}>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>新人姓名</Text>
+                    <Text className={styles.confirmValue}>{nameText || '未设置'}</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>婚礼日期</Text>
+                    <Text className={styles.confirmValue}>{dateText || '未设置'}</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>婚礼风格</Text>
+                    <Text className={styles.confirmValue}>{selectedStyle?.name || '未设置'}</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>主色系</Text>
+                    <Text className={styles.confirmValue}>{selectedColor?.name || '未设置'}</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>边框样式</Text>
+                    <Text className={styles.confirmValue}>
+                      {showBorder ? borderNameMap[selectedBorder] || '细边框' : '无边框'}
+                    </Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>烫金效果</Text>
+                    <Text className={styles.confirmValue}>{hasGoldFoil ? '已开启' : '未开启'}</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>照片</Text>
+                    <Text className={styles.confirmValue}>{photoUrl ? '已上传' : '未上传'}</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>文字颜色</Text>
+                    <View className={styles.confirmColorDot} style={{ background: textColor }} />
+                  </View>
+                </View>
+                {photoUrl && (
+                  <View className={styles.confirmPhoto}>
+                    <Image src={photoUrl} mode="aspectFill" className={styles.confirmPhotoImg} />
+                  </View>
+                )}
+              </View>
+
+              <View className={styles.confirmSection}>
+                <Text className={styles.confirmSectionTitle}>制作配置</Text>
+                <View className={styles.confirmGrid}>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>纸张类型</Text>
+                    <Text className={styles.confirmValue}>{paperInfo?.name}</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>纸张加价</Text>
+                    <Text className={styles.confirmValue}>{formatPrice(paperInfo?.price || 0)}/份</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>总数量</Text>
+                    <Text className={styles.confirmValue}>{totalQuantity}份</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>加急服务</Text>
+                    <Text className={classnames(styles.confirmValue, isUrgent && styles.urgentText)}>
+                      {isUrgent ? '是 +20%' : '否'}
+                    </Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>宾客人数</Text>
+                    <Text className={styles.confirmValue}>{guests.length}人 · {tables.length}桌</Text>
+                  </View>
+                  <View className={styles.confirmItem}>
+                    <Text className={styles.confirmLabel}>制作尺寸</Text>
+                    <Text className={styles.confirmValue}>{selectedSize?.name || '标准'}</Text>
+                  </View>
+                </View>
+              </View>
+
+              <View className={styles.confirmSection}>
+                <Text className={styles.confirmSectionTitle}>物料明细</Text>
+                {orderItems.map(item => {
+                  const paper = paperInfo?.price || 0;
+                  const itemTotal = item.quantity * (item.unitPrice + paper);
+                  return (
+                    <View key={item.id} className={styles.confirmMaterialRow}>
+                      <Text className={styles.confirmMatName}>{item.name}</Text>
+                      <Text className={styles.confirmMatQty}>×{item.quantity}</Text>
+                      <Text className={styles.confirmMatPrice}>{formatPrice(itemTotal)}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+
+              {remark && (
+                <View className={styles.confirmSection}>
+                  <Text className={styles.confirmSectionTitle}>备注</Text>
+                  <Text className={styles.confirmRemark}>{remark}</Text>
+                </View>
+              )}
+            </ScrollView>
+            <View className={styles.confirmFooter}>
+              <View className={styles.confirmTotalRow}>
+                <Text className={styles.confirmTotalLabel}>订单总额</Text>
+                <Text className={styles.confirmTotalValue}>{formatPrice(totalAmount)}</Text>
+              </View>
+              <Button className={styles.confirmSubmitBtn} onClick={handleSubmit}>
+                确认下单
+              </Button>
+            </View>
+          </View>
+        </View>
+      )}
+
       <View className={styles.summaryBar}>
         <View className={styles.priceSummary}>
           <View className={styles.priceDetails}>
@@ -275,12 +437,13 @@ const OrderPage: React.FC = () => {
             </View>
           </View>
         </View>
-        <Button className={styles.submitBtn} onClick={handleSubmit}>
+        <Button className={styles.submitBtn} onClick={handleShowConfirm}>
           提交订单 {formatPrice(totalAmount)}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 export default OrderPage;
+

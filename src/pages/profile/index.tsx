@@ -14,6 +14,13 @@ const statusLabelMap: Record<string, string> = {
   completed: '已完成'
 };
 
+const borderNameMap: Record<string, string> = {
+  b1: '细边框',
+  b2: '粗边框',
+  b3: '双线边框',
+  b4: '无边框'
+};
+
 const typeMap: Record<string, string> = {
   tableCard: '桌卡',
   seatingChart: '席位图',
@@ -160,6 +167,92 @@ const ProfilePage: React.FC = () => {
                 <Text className={styles.detailEmpty}>暂无物料信息</Text>
               )}
               <View className={styles.detailDivider} />
+              {selectedOrder.productionConfig ? (
+                <>
+                  <Text className={styles.detailSectionTitle}>制作配置</Text>
+                  {selectedOrder.productionConfig.photoUrl && (
+                    <View className={styles.detailPhotoPreview}>
+                      <Image
+                        src={selectedOrder.productionConfig.photoUrl}
+                        mode="aspectFill"
+                        className={styles.detailPhotoImg}
+                      />
+                    </View>
+                  )}
+                  <View className={styles.detailGrid}>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>新人姓名</Text>
+                      <Text className={styles.detailGridValue}>{selectedOrder.productionConfig.nameText}</Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>婚礼日期</Text>
+                      <Text className={styles.detailGridValue}>{selectedOrder.productionConfig.dateText}</Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>婚礼风格</Text>
+                      <Text className={styles.detailGridValue}>{selectedOrder.productionConfig.styleName}</Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>主色系</Text>
+                      <Text className={styles.detailGridValue}>{selectedOrder.productionConfig.colorName}</Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>边框样式</Text>
+                      <Text className={styles.detailGridValue}>
+                        {selectedOrder.productionConfig.showBorder
+                          ? borderNameMap[selectedOrder.productionConfig.borderStyle] || '细边框'
+                          : '无边框'}
+                      </Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>烫金效果</Text>
+                      <Text className={styles.detailGridValue}>
+                        {selectedOrder.productionConfig.hasGoldFoil ? '已开启' : '未开启'}
+                      </Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>纸张类型</Text>
+                      <Text className={styles.detailGridValue}>{selectedOrder.productionConfig.paperName}</Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>加急服务</Text>
+                      <Text
+                        className={classnames(
+                          styles.detailGridValue,
+                          selectedOrder.productionConfig.isUrgent && styles.urgentText
+                        )}
+                      >
+                        {selectedOrder.productionConfig.isUrgent ? '是 +20%' : '否'}
+                      </Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>宾客人数</Text>
+                      <Text className={styles.detailGridValue}>
+                        {selectedOrder.productionConfig.guestCount}人 · {selectedOrder.productionConfig.tableCount}桌
+                      </Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>制作尺寸</Text>
+                      <Text className={styles.detailGridValue}>{selectedOrder.productionConfig.sizeName}</Text>
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>文字颜色</Text>
+                      <View className={styles.detailColorDot} style={{ background: selectedOrder.productionConfig.textColor }} />
+                    </View>
+                    <View className={styles.detailGridItem}>
+                      <Text className={styles.detailGridLabel}>标题文字</Text>
+                      <Text className={styles.detailGridValue}>{selectedOrder.productionConfig.titleText}</Text>
+                    </View>
+                  </View>
+                  {selectedOrder.productionConfig.remark && (
+                    <>
+                      <Text className={styles.detailSectionTitle}>订单备注</Text>
+                      <Text className={styles.detailRemark}>{selectedOrder.productionConfig.remark}</Text>
+                    </>
+                  )}
+                  <View className={styles.detailDivider} />
+                </>
+              ) : null}
               <View className={styles.detailRow}>
                 <Text className={styles.detailLabel} style={{ fontWeight: '600' }}>订单总额</Text>
                 <Text className={styles.detailTotalAmount}>{formatPrice(selectedOrder.totalAmount)}</Text>

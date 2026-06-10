@@ -107,6 +107,47 @@ export interface HistoryOrder {
   statusText: string;
   totalAmount: number;
   items: OrderItem[];
+  productionConfig?: ProductionConfig;
+}
+
+export interface ProductionConfig {
+  photoUrl: string;
+  borderStyle: string;
+  showBorder: boolean;
+  hasGoldFoil: boolean;
+  textColor: string;
+  titleText: string;
+  nameText: string;
+  dateText: string;
+  paperId: string;
+  paperName: string;
+  isUrgent: boolean;
+  styleName: string;
+  colorName: string;
+  sizeName: string;
+  guestCount: number;
+  tableCount: number;
+  remark?: string;
+}
+
+export interface DesignScheme {
+  id: string;
+  name: string;
+  style: WeddingStyle | null;
+  color: ColorScheme | null;
+  size: SizeOption | null;
+  template: Template | null;
+  photoUrl: string;
+  borderStyle: string;
+  showBorder: boolean;
+  hasGoldFoil: boolean;
+  textColor: string;
+  titleText: string;
+  nameText: string;
+  dateText: string;
+  selectedFont: string;
+  selectedPattern: string;
+  updateTime: string;
 }
 
 export interface BlessingTemplate {
