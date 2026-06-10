@@ -69,6 +69,116 @@
   }
 }
 
+.addForm {
+  margin: 0 $page-padding;
+  margin-bottom: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  .formHeader {
+    padding: $spacing-md $spacing-lg;
+    border-bottom: 1rpx solid $color-divider;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .formTitle {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .formClose {
+      font-size: $font-size-lg;
+      color: $color-text-tertiary;
+      padding: $spacing-xs;
+    }
+  }
+
+  .formBody {
+    padding: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .formItem {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing-md;
+
+      .formLabel {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        flex-shrink: 0;
+        width: 120rpx;
+      }
+
+      .formInput {
+        flex: 1;
+        height: 72rpx;
+        padding: 0 $spacing-md;
+        background: $color-bg-page;
+        border-radius: $radius-md;
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+      }
+
+      .toggleSwitch {
+        width: 88rpx;
+        height: 48rpx;
+        border-radius: 48rpx;
+        background: $color-text-disabled;
+        position: relative;
+        transition: all $transition-base;
+
+        &.active {
+          background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 4rpx;
+          left: 4rpx;
+          width: 40rpx;
+          height: 40rpx;
+          border-radius: $radius-round;
+          background: $color-text-white;
+          transition: all $transition-base;
+          box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+        }
+
+        &.active::after {
+          left: 44rpx;
+        }
+      }
+    }
+
+    .formActions {
+      padding-top: $spacing-sm;
+
+      .formSubmitBtn {
+        @include button-reset;
+        width: 100%;
+        height: $button-height-md;
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+        border-radius: $radius-button;
+        color: $color-text-white;
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+
+        &:active {
+          opacity: 0.9;
+          transform: scale(0.98);
+        }
+      }
+    }
+  }
+}
+
 .tabs {
   padding: 0 $page-padding;
   margin-bottom: $spacing-md;
@@ -252,6 +362,25 @@
             align-items: center;
             gap: 4rpx;
           }
+        }
+      }
+
+      .guestActions {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        flex-shrink: 0;
+
+        .editLink {
+          font-size: $font-size-xs;
+          color: $color-primary;
+          padding: $spacing-xs $spacing-sm;
+        }
+
+        .deleteLink {
+          font-size: $font-size-xs;
+          color: $color-error;
+          padding: $spacing-xs $spacing-sm;
         }
       }
 

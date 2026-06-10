@@ -258,3 +258,126 @@
     }
   }
 }
+
+.orderDetailOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.orderDetailPanel {
+  width: 100%;
+  max-height: 80vh;
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+  overflow-y: auto;
+
+  .detailHeader {
+    padding: $spacing-lg $spacing-lg $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1rpx solid $color-divider;
+
+    .detailTitle {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+    }
+
+    .detailClose {
+      font-size: $font-size-xl;
+      color: $color-text-tertiary;
+      padding: $spacing-xs;
+    }
+  }
+
+  .detailBody {
+    padding: $spacing-lg;
+
+    .detailRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $spacing-md;
+
+      .detailLabel {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+      }
+
+      .detailValue {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+      }
+
+      .detailStatus {
+        color: $color-primary;
+      }
+    }
+
+    .detailDivider {
+      height: 1rpx;
+      background: $color-divider;
+      margin: $spacing-md 0;
+    }
+
+    .detailSectionTitle {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      margin-bottom: $spacing-md;
+      display: block;
+    }
+
+    .detailItem {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $spacing-sm 0;
+
+      .detailItemInfo {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        .detailItemName {
+          font-size: $font-size-sm;
+          color: $color-text-primary;
+        }
+
+        .detailItemQty {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+        }
+      }
+
+      .detailItemPrice {
+        font-size: $font-size-sm;
+        color: $color-primary;
+        font-weight: $font-weight-semibold;
+      }
+    }
+
+    .detailEmpty {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      text-align: center;
+      padding: $spacing-lg 0;
+    }
+
+    .detailTotalAmount {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $color-primary;
+    }
+  }
+}

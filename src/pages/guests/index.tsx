@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, Button, ScrollView } from '@tarojs/components';
+import { View, Text, Input, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
-import { mockGuests, mockTables } from '@/data/mock';
+import { useDesign } from '@/store/DesignContext';
+import { generateId } from '@/utils';
+import { Guest } from '@/types';
 import styles from './index.module.scss';
 
+const importGuests = [
+  { name: '陈雨晴', isChild: false, allergies: [], phone: '139****5678' },
+  { name: '刘明远', isChild: false, allergies: ['花生'], phone: '137****2345' },
+  { name: '小豆子', isChild: true, allergies: [], phone: '' },
+  { name: '赵文博', isChild: false, allergies: [], phone: '136****8901' },
+  { name: '孙婉清', isChild: false, allergies: ['海鲜'], phone: '135****4567' },
+];
+
 const GuestsPage: React.FC = () => {
+  const { guests, tables, addGuest, updateGuest, removeGuest, addTable } = useDesign();
   const [activeTab, setActiveTab] = useState('tables');
-  const [guests] = useState(mockGuests);
-  const [tables] = useState(mockTables);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingGuestId, setEditingGuestId] = useState<string | null>(null);
+  const [addForm, setAddForm] = useState({ name: '', phone: '', isChild: false, allergies: '', tableNumber: '' });
 
   const totalGuests = guests.length;
   const childCount = guests.filter(g => g.isChild).length;
@@ -17,25 +29,109 @@ const GuestsPage: React.FC = () => {
 
   const handleImport = () => {
     console.log('[Guests] 导入宾客名单');
+    let importedCount = 0;
+    importGuests.forEach(g => {
+      const exists = guests.find(existing => existing.name === g.name);
+      if (!exists) {
+        addGuest({
+          id: generateId(),
+          name: g.name,
+          isChild: g.isChild,
+          allergies: g.allergies,
+          phone: g.phone,
+          tableNumber: undefined,
+          notes: ''
+        });
+        importedCount++;
+      }
+    });
     Taro.showToast({
-      title: '支持Excel/CSV导入',
-      icon: 'none'
+      title: importedCount > 0 ? `成功导入${importedCount}位宾客` : '无新宾客可导入',
+      icon: importedCount > 0 ? 'success' : 'none'
     });
   };
 
   const handleAddGuest = () => {
-    console.log('[Guests] 添加宾客');
-    Taro.showToast({
-      title: '添加宾客',
-      icon: 'none'
+    setShowAddForm(true);
+    setEditingGuestId(null);
+    setAddForm({ name: '', phone: '', isChild: false, allergies: '', tableNumber: '' });
+  };
+
+  const handleEditGuest = (guest: Guest) => {
+    setEditingGuestId(guest.id);
+    setShowAddForm(true);
+    setAddForm({
+      name: guest.name,
+      phone: guest.phone || '',
+      isChild: guest.isChild,
+      allergies: guest.allergies.join('、'),
+      tableNumber: guest.tableNumber ? String(guest.tableNumber) : ''
+    });
+  };
+
+  const handleSubmitGuest = () => {
+    if (!addForm.name.trim()) {
+      Taro.showToast({ title: '请输入宾客姓名', icon: 'none' });
+      return;
+    }
+
+    const allergies = addForm.allergies
+      ? addForm.allergies.split(/[、,，]/).map(a => a.trim()).filter(Boolean)
+      : [];
+    const tableNumber = addForm.tableNumber ? parseInt(addForm.tableNumber) : undefined;
+
+    if (editingGuestId) {
+      updateGuest(editingGuestId, {
+        name: addForm.name.trim(),
+        phone: addForm.phone.trim() || undefined,
+        isChild: addForm.isChild,
+        allergies,
+        tableNumber
+      });
+      Taro.showToast({ title: '宾客信息已更新', icon: 'success' });
+    } else {
+      addGuest({
+        id: generateId(),
+        name: addForm.name.trim(),
+        phone: addForm.phone.trim() || undefined,
+        isChild: addForm.isChild,
+        allergies,
+        tableNumber,
+        notes: ''
+      });
+      Taro.showToast({ title: '已添加宾客', icon: 'success' });
+    }
+
+    setShowAddForm(false);
+    setEditingGuestId(null);
+    setAddForm({ name: '', phone: '', isChild: false, allergies: '', tableNumber: '' });
+  };
+
+  const handleDeleteGuest = (id: string) => {
+    Taro.showModal({
+      title: '确认删除',
+      content: '确定要移除该宾客吗？',
+      success: (res) => {
+        if (res.confirm) {
+          removeGuest(id);
+          Taro.showToast({ title: '已删除', icon: 'success' });
+        }
+      }
     });
   };
 
   const handleAddTable = () => {
     console.log('[Guests] 添加桌次');
+    const nextNumber = tables.length > 0 ? Math.max(...tables.map(t => t.number)) + 1 : 1;
+    addTable({
+      id: generateId(),
+      number: nextNumber,
+      name: `${nextNumber}号桌`,
+      guestIds: []
+    });
     Taro.showToast({
-      title: '新建桌次',
-      icon: 'none'
+      title: `已添加${nextNumber}号桌`,
+      icon: 'success'
     });
   };
 
@@ -86,6 +182,66 @@ const GuestsPage: React.FC = () => {
         </Button>
       </View>
 
+      {showAddForm && (
+        <View className={styles.addForm}>
+          <View className={styles.formHeader}>
+            <Text className={styles.formTitle}>{editingGuestId ? '编辑宾客' : '添加宾客'}</Text>
+            <Text className={styles.formClose} onClick={() => { setShowAddForm(false); setEditingGuestId(null); }}>✕</Text>
+          </View>
+          <View className={styles.formBody}>
+            <View className={styles.formItem}>
+              <Text className={styles.formLabel}>姓名</Text>
+              <Input
+                className={styles.formInput}
+                placeholder="请输入宾客姓名"
+                value={addForm.name}
+                onInput={(e) => setAddForm(prev => ({ ...prev, name: e.detail.value }))}
+              />
+            </View>
+            <View className={styles.formItem}>
+              <Text className={styles.formLabel}>电话</Text>
+              <Input
+                className={styles.formInput}
+                placeholder="选填"
+                value={addForm.phone}
+                onInput={(e) => setAddForm(prev => ({ ...prev, phone: e.detail.value }))}
+              />
+            </View>
+            <View className={styles.formItem}>
+              <Text className={styles.formLabel}>桌号</Text>
+              <Input
+                className={styles.formInput}
+                type="number"
+                placeholder="留空待分配"
+                value={addForm.tableNumber}
+                onInput={(e) => setAddForm(prev => ({ ...prev, tableNumber: e.detail.value }))}
+              />
+            </View>
+            <View className={styles.formItem}>
+              <Text className={styles.formLabel}>过敏信息</Text>
+              <Input
+                className={styles.formInput}
+                placeholder="如：花生、海鲜（用顿号分隔）"
+                value={addForm.allergies}
+                onInput={(e) => setAddForm(prev => ({ ...prev, allergies: e.detail.value }))}
+              />
+            </View>
+            <View className={styles.formItem}>
+              <Text className={styles.formLabel}>儿童餐</Text>
+              <View
+                className={classnames(styles.toggleSwitch, addForm.isChild && styles.active)}
+                onClick={() => setAddForm(prev => ({ ...prev, isChild: !prev.isChild }))}
+              />
+            </View>
+            <View className={styles.formActions}>
+              <Button className={styles.formSubmitBtn} onClick={handleSubmitGuest}>
+                {editingGuestId ? '保存修改' : '确认添加'}
+              </Button>
+            </View>
+          </View>
+        </View>
+      )}
+
       <View className={styles.tabs}>
         <Text
           className={classnames(styles.tab, activeTab === 'tables' && styles.active)}
@@ -115,7 +271,7 @@ const GuestsPage: React.FC = () => {
                     <Text className={styles.tableNo}>{table.number}</Text>
                     <Text className={styles.tableName}>{table.name}</Text>
                   </View>
-                  <Text className={styles.guestCount}>{table.guestIds.length} 人</Text>
+                  <Text className={styles.guestCount}>{getGuestsByTable(table.number).length} 人</Text>
                 </View>
                 <View className={styles.tableBody}>
                   <View className={styles.guestsRow}>
@@ -127,6 +283,7 @@ const GuestsPage: React.FC = () => {
                           guest.isChild && styles.child,
                           guest.allergies.length > 0 && styles.allergy
                         )}
+                        onClick={() => handleEditGuest(guest)}
                       >
                         {guest.name}
                         {guest.isChild && <Text className={styles.tag}>童</Text>}
@@ -149,7 +306,7 @@ const GuestsPage: React.FC = () => {
                 <View className={styles.tableBody}>
                   <View className={styles.guestsRow}>
                     {unassignedGuests.map(guest => (
-                      <Text key={guest.id} className={styles.guestBadge}>
+                      <Text key={guest.id} className={styles.guestBadge} onClick={() => handleEditGuest(guest)}>
                         {guest.name}
                       </Text>
                     ))}
@@ -189,11 +346,15 @@ const GuestsPage: React.FC = () => {
                     )}
                   </View>
                 </View>
-                {guest.tableNumber ? (
-                  <Text className={styles.tableBadge}>{guest.tableNumber}号桌</Text>
-                ) : (
-                  <Text className={styles.unassigned}>待分配</Text>
-                )}
+                <View className={styles.guestActions}>
+                  {guest.tableNumber ? (
+                    <Text className={styles.tableBadge}>{guest.tableNumber}号桌</Text>
+                  ) : (
+                    <Text className={styles.unassigned}>待分配</Text>
+                  )}
+                  <Text className={styles.editLink} onClick={() => handleEditGuest(guest)}>编辑</Text>
+                  <Text className={styles.deleteLink} onClick={() => handleDeleteGuest(guest.id)}>删除</Text>
+                </View>
               </View>
             ))}
           </View>

@@ -29,25 +29,39 @@ const borderList = [
   { id: 'b4', name: '无边框' }
 ];
 
+const borderStyleMap: Record<string, string> = {
+  b1: '2rpx solid #C9A96E',
+  b2: '5rpx solid #C9A96E',
+  b3: 'double 6rpx #C9A96E',
+  b4: 'none'
+};
+
 const EditorPage: React.FC = () => {
-  const { selectedTemplate } = useDesign();
+  const {
+    selectedTemplate, photoUrl, setPhotoUrl,
+    selectedBorder, setSelectedBorder,
+    showBorder, setShowBorder,
+    hasGoldFoil, setHasGoldFoil
+  } = useDesign();
+
   const [titleText, setTitleText] = useState('Mr & Mrs');
   const [nameText, setNameText] = useState('王浩 & 李静');
   const [dateText, setDateText] = useState('2024.06.18');
   const [selectedFont, setSelectedFont] = useState('font-1');
   const [selectedColor, setSelectedColor] = useState(colorSchemes[0].primary);
   const [selectedPattern, setSelectedPattern] = useState('p1');
-  const [selectedBorder, setSelectedBorder] = useState('b1');
-  const [hasGoldFoil, setHasGoldFoil] = useState(true);
-  const [hasPhoto, setHasPhoto] = useState(false);
-  const [showBorder, setShowBorder] = useState(true);
+  const [hasPhoto, setHasPhoto] = useState(!!photoUrl);
 
   const handleChooseImage = () => {
     console.log('[Editor] 选择照片');
     Taro.chooseImage({
       count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
       success: (res) => {
-        console.log('[Editor] 图片选择成功:', res.tempFilePaths);
+        const url = res.tempFilePaths[0];
+        console.log('[Editor] 图片选择成功:', url);
+        setPhotoUrl(url);
         setHasPhoto(true);
       },
       fail: (err) => {
@@ -71,13 +85,45 @@ const EditorPage: React.FC = () => {
     Taro.navigateTo({ url: '/pages/guests/index' });
   };
 
+  const handleBorderChange = (borderId: string) => {
+    console.log('[Editor] 切换边框样式:', borderId);
+    setSelectedBorder(borderId);
+  };
+
+  const handleToggleShowBorder = () => {
+    setShowBorder(!showBorder);
+  };
+
+  const handleToggleGoldFoil = () => {
+    setHasGoldFoil(!hasGoldFoil);
+  };
+
+  const handleTogglePhoto = () => {
+    const next = !hasPhoto;
+    setHasPhoto(next);
+    if (!next) {
+      setPhotoUrl('');
+    }
+  };
+
+  const currentBorderStyle = borderStyleMap[selectedBorder] || borderStyleMap.b1;
+
   return (
     <View className={styles.pageContainer}>
       <View className={styles.previewArea}>
         <View className={styles.designCanvas}>
           <View className={styles.canvasInner}>
-            {showBorder && (
-              <View className={classnames(styles.borderDecor, hasGoldFoil && styles.goldFoil)} />
+            {showBorder && selectedBorder !== 'b4' && (
+              <View
+                className={classnames(styles.borderDecor, hasGoldFoil && styles.goldFoil)}
+                style={{ border: hasGoldFoil ? undefined : currentBorderStyle }}
+              />
+            )}
+            {showBorder && selectedBorder !== 'b4' && hasGoldFoil && (
+              <View
+                className={styles.borderDecorGold}
+                style={{ border: currentBorderStyle }}
+              />
             )}
             {selectedPattern !== 'p6' && (
               <>
@@ -87,7 +133,12 @@ const EditorPage: React.FC = () => {
                 <View className={classnames(styles.cornerPattern, styles.bottomRight)} />
               </>
             )}
-            {hasPhoto && (
+            {hasPhoto && photoUrl && (
+              <View className={styles.photoArea}>
+                <Image className={styles.photoImg} src={photoUrl} mode="aspectFill" />
+              </View>
+            )}
+            {hasPhoto && !photoUrl && (
               <View className={styles.photoArea}>
                 <Text className={styles.placeholder}>♥</Text>
               </View>
@@ -167,7 +218,7 @@ const EditorPage: React.FC = () => {
               </Text>
               <View
                 className={classnames(styles.toggleSwitch, hasGoldFoil && styles.active)}
-                onClick={() => setHasGoldFoil(!hasGoldFoil)}
+                onClick={handleToggleGoldFoil}
               />
             </View>
           </View>
@@ -201,7 +252,7 @@ const EditorPage: React.FC = () => {
               <Text className={styles.toggleLabel}>显示边框</Text>
               <View
                 className={classnames(styles.toggleSwitch, showBorder && styles.active)}
-                onClick={() => setShowBorder(!showBorder)}
+                onClick={handleToggleShowBorder}
               />
             </View>
             <View className={styles.borderOptions}>
@@ -209,15 +260,13 @@ const EditorPage: React.FC = () => {
                 <View
                   key={border.id}
                   className={classnames(styles.borderItem, selectedBorder === border.id && styles.active)}
-                  onClick={() => setSelectedBorder(border.id)}
+                  onClick={() => handleBorderChange(border.id)}
                 >
                   <View className={styles.borderPreview}>
                     <View style={{
                       width: border.id === 'b4' ? '0' : '60rpx',
                       height: border.id === 'b4' ? '0' : '40rpx',
-                      border: border.id === 'b1' ? '1rpx solid #C9A96E' :
-                              border.id === 'b2' ? '3rpx solid #C9A96E' :
-                              border.id === 'b3' ? 'double 4rpx #C9A96E' : 'none'
+                      border: borderStyleMap[border.id]
                     }} />
                   </View>
                   <Text className={styles.borderName}>{border.name}</Text>
@@ -236,13 +285,19 @@ const EditorPage: React.FC = () => {
               <Text className={styles.toggleLabel}>显示照片</Text>
               <View
                 className={classnames(styles.toggleSwitch, hasPhoto && styles.active)}
-                onClick={() => setHasPhoto(!hasPhoto)}
+                onClick={handleTogglePhoto}
               />
             </View>
             <View className={styles.photoUpload} onClick={handleChooseImage}>
-              <Text className={styles.uploadIcon}>+</Text>
-              <Text className={styles.uploadText}>点击上传照片</Text>
-              <Text className={styles.uploadHint}>建议使用正方形高清照片</Text>
+              {photoUrl ? (
+                <Image src={photoUrl} mode="aspectFill" style={{ width: '200rpx', height: '200rpx', borderRadius: '12rpx' }} />
+              ) : (
+                <>
+                  <Text className={styles.uploadIcon}>+</Text>
+                  <Text className={styles.uploadText}>点击上传照片</Text>
+                  <Text className={styles.uploadHint}>建议使用正方形高清照片</Text>
+                </>
+              )}
             </View>
           </View>
         </View>

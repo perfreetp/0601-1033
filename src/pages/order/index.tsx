@@ -3,7 +3,9 @@ import { View, Text, Image, Input, Button, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { paperOptions, mockMaterials } from '@/data/mock';
-import { formatPrice } from '@/utils';
+import { formatPrice, generateId } from '@/utils';
+import { useDesign } from '@/store/DesignContext';
+import { HistoryOrder, OrderItem } from '@/types';
 import styles from './index.module.scss';
 
 interface OrderItemState {
@@ -23,6 +25,7 @@ const typeMap: Record<string, string> = {
 };
 
 const OrderPage: React.FC = () => {
+  const { addHistoryOrder, selectedStyle } = useDesign();
   const [orderItems, setOrderItems] = useState<OrderItemState[]>(
     mockMaterials.map((m, idx) => ({
       id: m.id,
@@ -78,6 +81,31 @@ const OrderPage: React.FC = () => {
       content: `订单总额: ${formatPrice(totalAmount)}，确认提交吗？`,
       success: (res) => {
         if (res.confirm) {
+          const now = new Date();
+          const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+          const orderNo = `WD${Date.now().toString().slice(-8)}`;
+
+          const orderItemsData: OrderItem[] = orderItems.map(item => ({
+            materialId: item.id,
+            materialName: item.name,
+            quantity: item.quantity,
+            paperId: selectedPaper,
+            unitPrice: item.unitPrice
+          }));
+
+          const newOrder: HistoryOrder = {
+            id: generateId(),
+            orderNo,
+            weddingName: selectedStyle ? `${selectedStyle.name}婚礼` : '王浩 & 李静',
+            date: dateStr,
+            status: 'producing',
+            statusText: '制作中',
+            totalAmount,
+            items: orderItemsData
+          };
+
+          addHistoryOrder(newOrder);
+
           Taro.showToast({
             title: '下单成功',
             icon: 'success'
