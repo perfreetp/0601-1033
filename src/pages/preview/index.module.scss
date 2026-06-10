@@ -1,0 +1,198 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.header {
+  padding: $spacing-lg $page-padding;
+
+  .title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  .subtitle {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+  }
+}
+
+.consistencyCheck {
+  margin: 0 $page-spacing;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(135deg, rgba(124, 182, 137, 0.1) 0%, rgba(124, 182, 137, 0.05) 100%);
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+
+  .icon {
+    width: 48rpx;
+    height: 48rpx;
+    line-height: 48rpx;
+    text-align: center;
+    font-size: 28rpx;
+    margin-right: $spacing-md;
+  }
+
+  .content {
+    flex: 1;
+
+    .title {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-success;
+      margin-bottom: 4rpx;
+    }
+
+    .desc {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+    }
+  }
+}
+
+.section {
+  padding: 0 $page-padding;
+  margin-bottom: $spacing-lg;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .count {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      font-weight: $font-weight-normal;
+    }
+  }
+}
+
+.materialList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .materialCard {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-card;
+    overflow: hidden;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.99);
+    }
+
+    .cardHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $spacing-md $spacing-lg;
+      border-bottom: 1rpx solid $color-divider;
+
+      .typeTag {
+        padding: $spacing-xs $spacing-md;
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+        color: $color-text-white;
+        border-radius: $radius-button;
+        font-size: $font-size-xs;
+      }
+
+      .editBtn {
+        font-size: $font-size-sm;
+        color: $color-primary;
+      }
+    }
+
+    .cardBody {
+      padding: $spacing-lg;
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+
+      .previewImg {
+        width: 180rpx;
+        height: 240rpx;
+        border-radius: $radius-md;
+        background: $color-bg-hover;
+        flex-shrink: 0;
+      }
+
+      .info {
+        flex: 1;
+
+        .name {
+          font-size: $font-size-md;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
+          margin-bottom: $spacing-xs;
+        }
+
+        .desc {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+          margin-bottom: $spacing-sm;
+        }
+
+        .status {
+          display: inline-flex;
+          align-items: center;
+          padding: 4rpx 12rpx;
+          background: rgba(124, 182, 137, 0.1);
+          border-radius: $radius-xs;
+          font-size: 20rpx;
+          color: $color-success;
+        }
+      }
+    }
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+
+  .secondaryBtn, .primaryBtn {
+    @include button-reset;
+    flex: 1;
+    height: $button-height-lg;
+    border-radius: $radius-button;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+  }
+
+  .secondaryBtn {
+    background: $color-bg-hover;
+    color: $color-text-secondary;
+  }
+
+  .primaryBtn {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+  }
+}

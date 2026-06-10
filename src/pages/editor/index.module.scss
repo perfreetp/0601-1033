@@ -1,0 +1,450 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 180rpx;
+}
+
+.previewArea {
+  margin: $spacing-md $page-padding;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  padding: $spacing-xl;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500rpx;
+
+  .designCanvas {
+    width: 100%;
+    max-width: 500rpx;
+    aspect-ratio: 148 / 210;
+    background: linear-gradient(180deg, #FBF7F0 0%, #F5EFE1 100%);
+    border-radius: $radius-md;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+
+    .canvasInner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: $spacing-xl;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .borderDecor {
+      position: absolute;
+      top: 24rpx;
+      left: 24rpx;
+      right: 24rpx;
+      bottom: 24rpx;
+      border: 2rpx solid $color-primary;
+      border-radius: $radius-sm;
+      pointer-events: none;
+
+      &.goldFoil {
+        border: 3rpx solid $color-primary;
+        box-shadow: inset 0 0 20rpx rgba(201, 169, 110, 0.3);
+      }
+    }
+
+    .titleText {
+      font-size: 40rpx;
+      font-weight: $font-weight-bold;
+      color: $color-primary-dark;
+      margin-bottom: $spacing-md;
+      text-align: center;
+      letter-spacing: 4rpx;
+    }
+
+    .subText {
+      font-size: $font-size-md;
+      color: $color-text-secondary;
+      text-align: center;
+      margin-bottom: $spacing-md;
+    }
+
+    .nameText {
+      font-size: 48rpx;
+      font-weight: $font-weight-bold;
+      color: $color-primary;
+      margin: $spacing-md 0;
+      text-align: center;
+      letter-spacing: 6rpx;
+
+      &.goldFoil {
+        background: linear-gradient(135deg, #F5E6A8 0%, #C9A96E 50%, #8B6914 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    }
+
+    .dateText {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      letter-spacing: 2rpx;
+    }
+
+    .cornerPattern {
+      position: absolute;
+      width: 60rpx;
+      height: 60rpx;
+
+      &.topLeft {
+        top: 32rpx;
+        left: 32rpx;
+        border-top: 3rpx solid $color-primary;
+        border-left: 3rpx solid $color-primary;
+        border-top-left-radius: $radius-sm;
+      }
+
+      &.topRight {
+        top: 32rpx;
+        right: 32rpx;
+        border-top: 3rpx solid $color-primary;
+        border-right: 3rpx solid $color-primary;
+        border-top-right-radius: $radius-sm;
+      }
+
+      &.bottomLeft {
+        bottom: 32rpx;
+        left: 32rpx;
+        border-bottom: 3rpx solid $color-primary;
+        border-left: 3rpx solid $color-primary;
+        border-bottom-left-radius: $radius-sm;
+      }
+
+      &.bottomRight {
+        bottom: 32rpx;
+        right: 32rpx;
+        border-bottom: 3rpx solid $color-primary;
+        border-right: 3rpx solid $color-primary;
+        border-bottom-right-radius: $radius-sm;
+      }
+    }
+
+    .photoArea {
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: $radius-round;
+      background: $color-primary-light;
+      margin-bottom: $spacing-md;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .photoImg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .placeholder {
+        font-size: 40rpx;
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+.editSections {
+  padding: 0 $page-padding;
+}
+
+.editSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  overflow: hidden;
+
+  .sectionHeader {
+    padding: $spacing-md $spacing-lg;
+    border-bottom: 1rpx solid $color-divider;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .title {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      .icon {
+        font-size: $font-size-lg;
+      }
+    }
+
+    .toggle {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .sectionBody {
+    padding: $spacing-lg;
+  }
+}
+
+.textInputs {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .inputItem {
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-bottom: $spacing-xs;
+    }
+
+    .input {
+      width: 100%;
+      padding: $spacing-sm $spacing-md;
+      background: $color-bg-page;
+      border-radius: $radius-md;
+      font-size: $font-size-md;
+      color: $color-text-primary;
+      border: 2rpx solid transparent;
+      transition: all $transition-base;
+
+      &:focus {
+        border-color: $color-primary;
+      }
+    }
+  }
+}
+
+.fontOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+
+  .fontItem {
+    padding: $spacing-sm $spacing-md;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    border: 2rpx solid transparent;
+    transition: all $transition-base;
+
+    &.active {
+      border-color: $color-primary;
+      background: rgba(201, 169, 110, 0.05);
+      color: $color-primary;
+    }
+  }
+}
+
+.colorOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  .colorItem {
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: $radius-round;
+    border: 4rpx solid transparent;
+    transition: all $transition-base;
+    position: relative;
+
+    &.active {
+      border-color: $color-text-primary;
+
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: $color-text-white;
+        font-size: 24rpx;
+        font-weight: bold;
+        text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+}
+
+.patternOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  .patternItem {
+    width: calc(33.33% - 16rpx);
+    padding: $spacing-md;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+    text-align: center;
+    border: 3rpx solid transparent;
+    transition: all $transition-base;
+
+    &.active {
+      border-color: $color-primary;
+      background: rgba(201, 169, 110, 0.05);
+    }
+
+    .patternName {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+    }
+  }
+}
+
+.borderOptions {
+  display: flex;
+  gap: $spacing-md;
+
+  .borderItem {
+    flex: 1;
+    padding: $spacing-md;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+    text-align: center;
+    border: 3rpx solid transparent;
+    transition: all $transition-base;
+
+    &.active {
+      border-color: $color-primary;
+    }
+
+    .borderPreview {
+      height: 80rpx;
+      margin-bottom: $spacing-xs;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .borderName {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+    }
+  }
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .toggleLabel {
+    font-size: $font-size-md;
+    color: $color-text-primary;
+
+    .desc {
+      display: block;
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-top: 4rpx;
+    }
+  }
+
+  .toggleSwitch {
+    width: 88rpx;
+    height: 48rpx;
+    border-radius: 48rpx;
+    background: $color-text-disabled;
+    position: relative;
+    transition: all $transition-base;
+
+    &.active {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 4rpx;
+      left: 4rpx;
+      width: 40rpx;
+      height: 40rpx;
+      border-radius: $radius-round;
+      background: $color-text-white;
+      transition: all $transition-base;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+    }
+
+    &.active::after {
+      left: 44rpx;
+    }
+  }
+}
+
+.photoUpload {
+  padding: $spacing-xl;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  text-align: center;
+  border: 2rpx dashed $color-border;
+
+  .uploadIcon {
+    font-size: 56rpx;
+    margin-bottom: $spacing-sm;
+    color: $color-primary;
+  }
+
+  .uploadText {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  .uploadHint {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-top: $spacing-xs;
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+
+  .secondaryBtn, .primaryBtn {
+    @include button-reset;
+    flex: 1;
+    height: $button-height-lg;
+    border-radius: $radius-button;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+  }
+
+  .secondaryBtn {
+    background: $color-bg-hover;
+    color: $color-text-secondary;
+  }
+
+  .primaryBtn {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+  }
+}

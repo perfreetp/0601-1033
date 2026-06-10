@@ -1,0 +1,305 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.statsBar {
+  margin: $spacing-md $page-padding;
+  padding: $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+
+  .stat {
+    flex: 1;
+    text-align: center;
+
+    &:not(:last-child) {
+      border-right: 1rpx solid $color-divider;
+    }
+
+    .num {
+      font-size: $font-size-xxl;
+      font-weight: $font-weight-bold;
+      color: $color-primary;
+      margin-bottom: 4rpx;
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.actionBar {
+  margin: 0 $page-padding;
+  margin-bottom: $spacing-md;
+  display: flex;
+  gap: $spacing-md;
+
+  .actionBtn {
+    @include button-reset;
+    flex: 1;
+    height: $button-height-md;
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+
+    &.primary {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+      color: $color-text-white;
+    }
+
+    &.secondary {
+      background: $color-bg-card;
+      color: $color-text-secondary;
+      box-shadow: $shadow-card;
+    }
+  }
+}
+
+.tabs {
+  padding: 0 $page-padding;
+  margin-bottom: $spacing-md;
+  display: flex;
+  gap: $spacing-sm;
+
+  .tab {
+    padding: $spacing-sm $spacing-lg;
+    background: $color-bg-card;
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    transition: all $transition-base;
+
+    &.active {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+      color: $color-text-white;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.tablesSection {
+  margin: 0 $page-padding;
+  margin-bottom: $spacing-lg;
+
+  .sectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .addBtn {
+      font-size: $font-size-xs;
+      color: $color-primary;
+      font-weight: normal;
+    }
+  }
+
+  .tableList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .tableCard {
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+      box-shadow: $shadow-card;
+      overflow: hidden;
+
+      .tableHeader {
+        padding: $spacing-md $spacing-lg;
+        background: linear-gradient(135deg, rgba(201, 169, 110, 0.1) 0%, rgba(232, 212, 184, 0.05) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1rpx solid $color-divider;
+
+        .tableInfo {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+
+          .tableNo {
+            width: 56rpx;
+            height: 56rpx;
+            line-height: 56rpx;
+            text-align: center;
+            background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+            color: $color-text-white;
+            border-radius: $radius-round;
+            font-size: $font-size-sm;
+            font-weight: $font-weight-bold;
+          }
+
+          .tableName {
+            font-size: $font-size-md;
+            font-weight: $font-weight-semibold;
+            color: $color-text-primary;
+          }
+        }
+
+        .guestCount {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+        }
+      }
+
+      .tableBody {
+        padding: $spacing-md $spacing-lg;
+
+        .guestsRow {
+          display: flex;
+          flex-wrap: wrap;
+          gap: $spacing-sm;
+        }
+      }
+    }
+  }
+}
+
+.guestBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  gap: $spacing-xs;
+  position: relative;
+
+  &.child {
+    background: rgba(124, 182, 137, 0.15);
+    color: $color-success;
+  }
+
+  &.allergy {
+    background: rgba(201, 106, 106, 0.1);
+    color: $color-error;
+  }
+
+  .tag {
+    font-size: 18rpx;
+    padding: 2rpx 8rpx;
+    border-radius: $radius-xs;
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.guestsSection {
+  margin: 0 $page-padding;
+
+  .sectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  .guestList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    .guestItem {
+      background: $color-bg-card;
+      border-radius: $radius-md;
+      padding: $spacing-md $spacing-lg;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: $shadow-card;
+
+      .guestInfo {
+        flex: 1;
+
+        .name {
+          font-size: $font-size-md;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
+          margin-bottom: $spacing-xs;
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+        }
+
+        .meta {
+          display: flex;
+          align-items: center;
+          gap: $spacing-md;
+          flex-wrap: wrap;
+
+          .metaItem {
+            font-size: $font-size-xs;
+            color: $color-text-tertiary;
+            display: inline-flex;
+            align-items: center;
+            gap: 4rpx;
+          }
+        }
+      }
+
+      .tableBadge {
+        padding: $spacing-xs $spacing-md;
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+        color: $color-text-white;
+        border-radius: $radius-button;
+        font-size: $font-size-xs;
+        flex-shrink: 0;
+      }
+
+      .unassigned {
+        padding: $spacing-xs $spacing-md;
+        background: $color-bg-hover;
+        color: $color-text-tertiary;
+        border-radius: $radius-button;
+        font-size: $font-size-xs;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+
+  .confirmBtn {
+    @include button-reset;
+    width: 100%;
+    height: $button-height-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    border-radius: $radius-button;
+    color: $color-text-white;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+  }
+}

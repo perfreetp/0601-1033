@@ -1,0 +1,260 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.userHeader {
+  padding: $spacing-xl $page-padding;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+
+  .userInfo {
+    display: flex;
+    align-items: center;
+
+    .avatar {
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: $radius-round;
+      background: rgba(255, 255, 255, 0.3);
+      margin-right: $spacing-lg;
+      overflow: hidden;
+
+      .avatarImg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .info {
+      flex: 1;
+
+      .name {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        color: $color-text-white;
+        margin-bottom: $spacing-xs;
+      }
+
+      .role {
+        font-size: $font-size-sm;
+        color: rgba(255, 255, 255, 0.85);
+      }
+    }
+
+    .settingBtn {
+      padding: $spacing-sm $spacing-md;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: $radius-button;
+      font-size: $font-size-xs;
+      color: $color-text-white;
+    }
+  }
+}
+
+.statsBar {
+  margin: -$spacing-lg $page-padding;
+  margin-top: -$spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  padding: $spacing-lg;
+  display: flex;
+
+  .statItem {
+    flex: 1;
+    text-align: center;
+
+    &:not(:last-child) {
+      border-right: 1rpx solid $color-divider;
+    }
+
+    .num {
+      font-size: $font-size-xxl;
+      font-weight: $font-weight-bold;
+      color: $color-primary;
+      margin-bottom: $spacing-xs;
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.section {
+  margin: 0 $page-padding;
+  margin-bottom: $spacing-lg;
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+
+    .title {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .more {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.brandList {
+  @include scroll-x-container;
+
+  .brandCard {
+    @include scroll-x-item(240rpx);
+    margin-right: $spacing-md;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-card;
+    overflow: hidden;
+
+    .cover {
+      width: 100%;
+      height: 300rpx;
+    }
+
+    .info {
+      padding: $spacing-md;
+
+      .name {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+        @include text-ellipsis;
+        margin-bottom: 4rpx;
+      }
+
+      .time {
+        font-size: 20rpx;
+        color: $color-text-tertiary;
+      }
+    }
+  }
+}
+
+.orderList {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  .orderItem {
+    padding: $spacing-lg;
+    border-bottom: 1rpx solid $color-divider;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .orderHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $spacing-sm;
+
+      .orderNo {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+      }
+
+      .status {
+        font-size: $font-size-xs;
+        padding: 4rpx 12rpx;
+        border-radius: $radius-xs;
+
+        &.producing {
+          background: rgba(212, 149, 106, 0.1);
+          color: $color-warning;
+        }
+
+        &.completed {
+          background: rgba(124, 182, 137, 0.1);
+          color: $color-success;
+        }
+      }
+    }
+
+    .weddingName {
+      font-size: $font-size-md;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-sm;
+    }
+
+    .orderFooter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .date {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+      }
+
+      .amount {
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+.blessingList {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  padding: $spacing-lg;
+
+  .blessingItem {
+    padding: $spacing-md 0;
+    border-bottom: 1rpx solid $color-divider;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $spacing-xs;
+
+      .title {
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+      }
+
+      .category {
+        font-size: 20rpx;
+        padding: 4rpx 12rpx;
+        background: $color-primary-light;
+        color: $color-primary-dark;
+        border-radius: $radius-xs;
+      }
+    }
+
+    .content {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: $line-height-normal;
+      @include text-ellipsis-multi(2);
+    }
+  }
+}
